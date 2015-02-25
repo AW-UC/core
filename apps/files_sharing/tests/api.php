@@ -186,7 +186,7 @@ class Test_Files_Sharing_Api extends TestCase {
 
 		// sharing file to a user should work if shareapi_exclude_groups is set
 		// to no
-		\OC::$server->getAppConfig()->setValue('core', 'shareapi_exclude_groups', 'no');
+		\OC::$server->getConfig()->setAppValue('core', 'shareapi_exclude_groups', 'no');
 		$_POST['path'] = $this->filename;
 		$_POST['shareWith'] = \Test_Files_Sharing_Api::TEST_FILES_SHARING_API_USER2;
 		$_POST['shareType'] = \OCP\Share::SHARE_TYPE_USER;
@@ -210,8 +210,8 @@ class Test_Files_Sharing_Api extends TestCase {
 		$this->assertTrue($result);
 
 		// exclude groups, but not the group the user belongs to. Sharing should still work
-		\OC::$server->getAppConfig()->setValue('core', 'shareapi_exclude_groups', 'yes');
-		\OC::$server->getAppConfig()->setValue('core', 'shareapi_exclude_groups_list', 'admin,group1,group2');
+		\OC::$server->getConfig()->setAppValue('core', 'shareapi_exclude_groups', 'yes');
+		\OC::$server->getConfig()->setAppValue('core', 'shareapi_exclude_groups_list', 'admin,group1,group2');
 
 		$_POST['path'] = $this->filename;
 		$_POST['shareWith'] = \Test_Files_Sharing_Api::TEST_FILES_SHARING_API_USER2;
@@ -236,7 +236,13 @@ class Test_Files_Sharing_Api extends TestCase {
 		$this->assertTrue($result);
 
 		// now we exclude the group the user belongs to ('group'), sharing should fail now
-		\OC::$server->getAppConfig()->setValue('core', 'shareapi_exclude_groups_list', 'admin,group');
+		\OC::$server->getConfig()->setAppValue('core', 'shareapi_exclude_groups_list', 'admin,group');
+		var_dump(
+			\OC::$server->getConfig()->getAppValue('core', 'shareapi_exclude_groups'),
+			\OC::$server->getConfig()->getAppValue('core', 'shareapi_exclude_groups', 'yes'),
+			\OC::$server->getConfig()->getAppValue('core', 'shareapi_exclude_groups_list'),
+			\OC::$server->getConfig()->getAppValue('core', 'shareapi_exclude_groups_list', 'admin,group1,group2')
+		);
 
 		$_POST['path'] = $this->filename;
 		$_POST['shareWith'] = \Test_Files_Sharing_Api::TEST_FILES_SHARING_API_USER2;
@@ -247,8 +253,8 @@ class Test_Files_Sharing_Api extends TestCase {
 		$this->assertFalse($result->succeeded());
 
 		// cleanup
-		\OC::$server->getAppConfig()->setValue('core', 'shareapi_exclude_groups', 'no');
-		\OC::$server->getAppConfig()->setValue('core', 'shareapi_exclude_groups_list', '');
+		\OC::$server->getConfig()->setAppValue('core', 'shareapi_exclude_groups', 'no');
+		\OC::$server->getConfig()->setAppValue('core', 'shareapi_exclude_groups_list', '');
 	}
 
 
